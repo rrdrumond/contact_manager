@@ -17,119 +17,52 @@
 #pseucodigo:
 
 # solicitar al usuario que desea realizar, agregar un contacto con informacion como nombre y numero de telefono, mostrar lista de contactos, buscar contacto, eliminar contacto, actualizar contacto.
-import os 
-import csv
-import re
-
-file_name = 'contact_manager_features.csv'
 
 
+from package.principal_functions import *
+#Create document CSV
 
-if not os.path.exists(file_name):
-    data = [
-        ['Name', 'Phone', 'Email']]
-    with open(file_name, mode= 'w', newline="") as file:
-        write_csv = csv.writer(file)
-        write_csv.writerows(data)
+create_csv()
+db_create_table()
 
-#crear funcion de agregar contacto solicitar informacion al usuario, indicar si el contacto ya existe si pretende actualizarlo, si no existe mostrar que no existe.
+no_exit = True
 
-def add():
+while no_exit:
     
-    pattern = r'\(?\d{3}\)?\s?-?\d{3}-\d{4}'
-    user_name = input('Enter the contact name: ').lower().strip().capitalize()
+    selection = get_selection()
     
-    no_match = True
-    while no_match:
-        user_phone = input('Enter the contact number phone ex (xxx) xxx-xxxx or xxx xxx-xxxx: ').strip()
-        if re.findall(pattern, user_phone):
-            no_match = False
-        else:
-            print('Format number not valid, please try again!')
-    pattern = r'[\w\.-]+\@[\w|.-]+\w+'
     
-    no_match = True
-    while no_match:
-        user_email = input('Enter the contact email: ').lower().strip()
-        if re.findall(pattern, user_email):
-            no_match = False
-        else: 
-            print('Format email not valid, please try!')
-            
-    with open(file_name, mode='r', newline="") as file:
-        read_csv = csv.reader(file)
+    
+    if selection is None:
+        continue
+    
+    if selection == 1:
+        add_contact()
         
-        for row in read_csv:
-            
-            if row[0] == user_name:
-                print('This contact is already exist!')
-                
-                valid_option = True
-                while valid_option:
-                    act = input('Do you want to update this contact?: please enter Y/N: ').strip().upper()
-                    if act == 'Y':
-                        valid_option = False
-                        print('OK')
-                        return
-                        
-                    elif act == 'N':
-                        print('Okay!')
-                        valid_option = False
-                        return
-                    else:
-                       print('Please enter a valid option!')
-            
-            
-        info_user = [user_name, user_phone, user_email]
-                
-        with open(file_name, mode = 'a', newline="")as file:
-                write_csv = csv.writer(file)
-                write_csv.writerow(info_user)
-                print('User add to list.')
-               
-#add()
-
-# crear funcion de listar contactos, mostrar uno a uno los contactos
-
-def show_contact():
-    with open(file_name, mode='r', newline="")as file:
-        read_csv = csv.reader(file)
         
-        for row in read_csv:
-            print(row)
-
-show_contact()
-# crear funcion de buscar contacto, solicitar el nombre del contacto que desea, presentarlo si se encuentra, caso contrario indicar que no existe y preguntar si desea agregarlo
-
-def search_contact():
-    user = input('Write the name you are looking for: ').lower().strip().capitalize()
-    with open(file_name, mode = 'r', newline="") as file:
-        read_csv = csv.reader(file)
+    elif selection == 2:
+        show_contact()
+       
         
-        user_found = False
-        for row in read_csv:
-            
-            if row[0] == user:
-                print(f'User found: {row}')
-                user_found = True
-    if not user_found :
-        print('User not found!')
-search_contact()
-            
-
-#elminar contacto, solicitar cual contacto desea eliminar, buscar en la lista, si no existe el contacto mostrarlo, caso que si exista eliminarlo y avisar que fue eliminado.
-
-def delete_contact():
-    user = input('Write the name you want to delete: ').lower().strip().capitalize()
-    with open(file_name, mode = 'r', newline="") as file:
-        read_csv = csv.reader(file)
-        new_list = []
-        [new_list.append(row) for row in read_csv if row[0] != user]
+    elif selection == 3:  
+        update_contact()
+       
         
-        with open(file_name)
-                
-delete_contact()
-#actualizar, preguntar que contacto desea acualizar, buscar si existe, caso que si exista preguntar que desea modificar si el telefono, el correo o ambos, caso que no exista indicarlo y preguntar si desea agregarlo.
+    elif selection == 4: 
+        delete_contact()
+      
+    
+    elif selection == 5:
+        search_contact()
+     
+        
+    elif selection == 6:
+        conn = abrir_base_de_datos()
+        conn.close()
+        no_exit = False
+        print('Exit of program ...')
+        
+    else:
+        print('Invalid option, please try again!')
 
 
-#salir, salir del programa e indicar la salida
