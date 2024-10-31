@@ -178,22 +178,21 @@ def delete_contact():
                 #database delete contact
                 db_delete_contact(user)
                 #Write all the csv without new contact
-                with open(file_name, mode = 'w', newline="") as file:
-                    write_csv = csv.writer(file)
-                
-                    for each in new_list:
-                        write_csv.writerow(each)
+                rewrite_csv(new_list)
                     
             elif question == 'N':
                 no_delete = False
-                return get_selection()
+                return
             else:
                 print('Option no valid, please try again!')
                 
 #Update contact
 def update_contact():
-    
+    #Check if file exist
     create_csv()
+    # Read csv file
+    read_csv = read_file_csv()
+    
     user = input('Write the name you want to update: ').lower().strip().capitalize()
     
     #Read csv file
@@ -221,6 +220,12 @@ def update_contact():
                 if option == 1:
                     old_name = person[0]
                     name = input('Write the new name: ').lower().strip().capitalize()
+                    for row in read_csv: 
+                    #If the user in the list ask if want to update
+                        if row[0] == name:
+                            print('This contact is already exist!')
+                            # Ask user if realy wants to update contact and check
+                            return exist_contact(name)
                     names = name.split(" ")
                     capitalize_name = " ".join([each.capitalize() for each in names])   
                     person[0] = capitalize_name
@@ -265,7 +270,7 @@ def update_contact():
                 elif option == 4:
                     no_back = True
                     rewrite_csv(new_list)
-                    return get_selection()
+                    return
                     
                     
                 elif option not in [1,2,3]:
